@@ -253,75 +253,83 @@
     </footer>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-  <script>
-    const fileInput = document.getElementById("fileInput");
-    const chooseFileBtn = document.getElementById("chooseFileBtn");
-    const convertBtn = document.getElementById("convertBtn");
-    const statusText = document.getElementById("status");
-    const progressBar = document.querySelector(".progress i");
-    let selectedFormat = "PNG";
-    let selectedFile = null;
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script>
+const fileInput = document.getElementById("fileInput");
+const chooseFileBtn = document.getElementById("chooseFileBtn");
+const convertBtn = document.getElementById("convertBtn");
+const statusText = document.getElementById("status");
+const progressBar = document.querySelector(".progress i");
+let selectedFormat = "PNG";
+let selectedFile = null;
 
-    document.querySelectorAll(".opt").forEach(opt => {
-      opt.addEventListener("click", () => {
-        document.querySelectorAll(".opt").forEach(o => o.classList.remove("selected"));
-        opt.classList.add("selected");
-        selectedFormat = opt.textContent.trim();
-      });
-    });
+document.querySelectorAll(".opt").forEach(opt => {
+  opt.addEventListener("click", () => {
+    document.querySelectorAll(".opt").forEach(o => o.classList.remove("selected"));
+    opt.classList.add("selected");
+    selectedFormat = opt.textContent.trim();
+  });
+});
 
-    chooseFileBtn.onclick = () => fileInput.click();
-    fileInput.onchange = e => {
-      selectedFile = e.target.files[0];
-      statusText.textContent = selectedFile ? `Loaded: ${selectedFile.name}` : "No file loaded";
-    };
+chooseFileBtn.onclick = () => fileInput.click();
+fileInput.onchange = e => {
+  selectedFile = e.target.files[0];
+  statusText.textContent = selectedFile ? `Loaded: ${selectedFile.name}` : "No file loaded";
+};
 
-    convertBtn.onclick = async () => {
-      if (!selectedFile) return alert("Please select a PDF file first!");
-      statusText.textContent = "Converting...";
-      progressBar.style.width = "20%";
+convertBtn.onclick = async () => {
+  if (!selectedFile) return alert("Please select a PDF file first!");
+  statusText.textContent = "Converting...";
+  progressBar.style.width = "10%";
 
-      const arrayBuffer = await selectedFile.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      const page = await pdf.getPage(1);
-      const viewport = page.getViewport({ scale: 2 });
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
+  const arrayBuffer = await selectedFile.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  const totalPages = pdf.numPages;
+  const fileBase = selectedFile.name.replace(/\.pdf$/i, "");
+  progressBar.style.width = "20%";
 
-      await page.render({ canvasContext: ctx, viewport }).promise;
-      progressBar.style.width = "70%";
+  for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+    const page = await pdf.getPage(pageNum);
+    const viewport = page.getViewport({ scale: 2 });
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
 
-      let blob;
-      let outputName = selectedFile.name.replace(/\.pdf$/i, "") + "." + selectedFormat.toLowerCase();
+    await page.render({ canvasContext: ctx, viewport }).promise;
 
-      if (["png", "jpg", "jpeg", "bmp", "webp"].includes(selectedFormat.toLowerCase())) {
-        blob = await new Promise(resolve => canvas.toBlob(resolve, "image/" + selectedFormat.toLowerCase()));
-      } else if (selectedFormat.toLowerCase() === "txt") {
-        const text = (await page.getTextContent()).items.map(i => i.str).join(" ");
-        blob = new Blob([text], { type: "text/plain" });
-      } else if (selectedFormat.toLowerCase() === "html") {
-        const text = (await page.getTextContent()).items.map(i => i.str).join(" ");
-        blob = new Blob([`<html><body>${text}</body></html>`], { type: "text/html" });
-      } else if (selectedFormat.toLowerCase() === "docx") {
-        const text = (await page.getTextContent()).items.map(i => i.str).join(" ");
-        blob = new Blob([text], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
-      }
+    let blob;
+    let outputName = `${fileBase}_page${pageNum}.${selectedFormat.toLowerCase()}`;
 
-      // ✅ Direct download (no zip)
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = outputName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+    if (["png", "jpg", "jpeg", "bmp", "webp"].includes(selectedFormat.toLowerCase())) {
+      blob = await new Promise(resolve => canvas.toBlob(resolve, "image/" + selectedFormat.toLowerCase()));
+    } else if (selectedFormat.toLowerCase() === "txt") {
+      const text = (await page.getTextContent()).items.map(i => i.str).join(" ");
+      blob = new Blob([text], { type: "text/plain" });
+    } else if (selectedFormat.toLowerCase() === "html") {
+      const text = (await page.getTextContent()).items.map(i => i.str).join(" ");
+      blob = new Blob([`<html><body>${text}</body></html>`], { type: "text/html" });
+    } else if (selectedFormat.toLowerCase() === "docx") {
+      const text = (await page.getTextContent()).items.map(i => i.str).join(" ");
+      blob = new Blob([text], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+    }
 
-      progressBar.style.width = "100%";
-      statusText.innerHTML = '<div class="success-tick"></div>Conversion Complete!';
-    };
-  </script>
+    // Directly trigger download per page
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = outputName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    progressBar.style.width = `${20 + (pageNum / totalPages) * 80}%`;
+  }
+
+  statusText.innerHTML = '<div class="success-tick"></div>All pages converted successfully!';
+  progressBar.style.width = "100%";
+};
+</script>
+
 </body>
 </html>
 
