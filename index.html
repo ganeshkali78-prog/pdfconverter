@@ -1,411 +1,327 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PDFConvertify – Free PDF Converter</title>
-  <meta name="description" content="Convert PDF pages to PNG, JPG, BMP, WEBP, TXT, DOCX, or HTML instantly. 100% private — runs locally in your browser. No upload required.">
-  <meta name="keywords" content="pdf to png, pdf converter, pdf to jpg, pdf to docx, free pdf converter, pdfconvertify">
-  <link rel="canonical" href="https://pdfconvertify.netlify.app/">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <meta name="google-adsense-account" content="ca-pub-8107249770638745">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Free PDF to PNG, JPG, TXT, DOCX converter. 100% private, runs locally in your browser. No upload, no tracking.">
+  <title>PDFConvertify — Free PDF Converter</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+
   <style>
-  :root {
-  --page-bg: linear-gradient(to bottom, #00cc99 20%, #0099ff 100%);
-  --card-bg: #ffffff;
-  --muted: #6b7280;
-  --accent1: #00cc99;
-  --accent2: #0099ff;
-  --radius: 14px;
-}
+    :root {
+      --page-bg: linear-gradient(to bottom, #00cc99 20%, #0099ff 100%);
+      --card-bg: #ffffff;
+      --muted: #6b7280;
+      --accent1: #00cc99;
+      --accent2: #0099ff;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
 
-* {
-  box-sizing: border-box;
-}
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui;
+      background: var(--page-bg);
+      background-attachment: fixed;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 40px 20px;
+      color: #111;
+    }
 
-html, body {
-  height: 100%;
-}
+    .container {
+      width: 100%;
+      max-width: 980px;
+    }
 
-body {
-  margin: 0;
-  font-family: Inter, ui-sans-serif, system-ui;
-  background: var(--page-bg);
-  background-attachment: fixed;
-  min-height: 100vh;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 40px 20px;
-  color: #111;
-}
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: 0 12px 30px rgba(2, 6, 23, 0.12);
+      padding: 28px;
+      position: relative;
+      margin: 0 auto 40px;
+      overflow: visible;
+    }
 
-/* Page wrapper */
-.container {
-  width: 100%;
-  max-width: 980px;
-}
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      border-radius: calc(var(--radius) - 2px);
+      box-shadow:
+        inset 0 0 20px rgba(0, 0, 0, 0.06),
+        inset 0 0 6px rgba(255, 255, 255, 0.45);
+      pointer-events: none;
+      z-index: 0;
+    }
 
-/* Main white card */
-.card {
-  background: var(--card-bg);
-  border-radius: var(--radius);
-  box-shadow: 0 12px 30px rgba(2, 6, 23, 0.12);
-  padding: 28px;
-  position: relative;
-  margin: 0 auto 40px;
-  overflow: visible;
-}
+    .card > * { position: relative; z-index: 1; }
 
-/* Inner lighting (Word-document margin look) */
-.card::before {
-  content: "";
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  right: 10px;
-  bottom: 10px;
-  border-radius: calc(var(--radius) - 2px);
-  box-shadow:
-    inset 0 0 20px rgba(0, 0, 0, 0.06),
-    inset 0 0 6px rgba(255, 255, 255, 0.45);
-  pointer-events: none;
-  z-index: 0;
-}
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .logo { font-weight: 800; font-size: 22px; }
+    .logo span {
+      background: linear-gradient(90deg, var(--accent1), var(--accent2));
+      -webkit-background-clip: text;
+      color: transparent;
+    }
 
-.card > * {
-  position: relative;
-  z-index: 1;
-}
+    .lead { color: var(--muted); margin-top: 6px; }
 
-/* Header */
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
+    .notice-box {
+      background: #f0fdf4;
+      border-left: 4px solid var(--accent1);
+      padding: 12px;
+      border-radius: 10px;
+      margin-top: 10px;
+      color: #065f46;
+      font-size: 14px;
+    }
 
-.logo {
-  font-weight: 800;
-  font-size: 22px;
-}
+    .upload-box {
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,0.06);
+      padding: 18px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
 
-.logo span {
-  background: linear-gradient(90deg, var(--accent1), var(--accent2));
-  -webkit-background-clip: text;
-  color: transparent;
-}
+    input[type=file] { display: none; }
 
-.lead {
-  color: var(--muted);
-  margin-top: 6px;
-}
+    .opts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .opt {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #e6e9ee;
+      background: #fbfdff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .opt.selected {
+      border-color: transparent;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      background: linear-gradient(90deg,var(--accent1),var(--accent2));
+      color: white;
+    }
 
-/* Notice box */
-.notice-box {
-  background: #f0fdf4;
-  border-left: 4px solid var(--accent1);
-  padding: 12px;
-  border-radius: 10px;
-  margin-top: 10px;
-  color: #065f46;
-  font-size: 14px;
-}
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(90deg,var(--accent1),var(--accent2));
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+    }
 
-/* Upload section */
-.upload-box {
-  border-radius: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  padding: 18px;
-  background: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
+    .small { font-size: 13px; color: var(--muted); }
 
-input[type=file] {
-  display: none;
-}
+    .ads-slot {
+      border-radius: 8px;
+      border: 1px dashed #e1e7f9;
+      padding: 12px;
+      text-align: center;
+      color: #334155;
+      background: #fbfcff;
+      margin-top: 16px;
+    }
 
-.opts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
-}
+    .progress {
+      width: 100%;
+      height: 12px;
+      background: #eef2ff;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
 
-.opt {
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid #e6e9ee;
-  background: #fbfdff;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
+    .progress > i {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg,var(--accent1),var(--accent2));
+      transition: width .2s ease;
+    }
 
-.opt.selected {
-  border-color: transparent;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-  background: linear-gradient(90deg, var(--accent1), var(--accent2));
-  color: white;
-}
+    .success-tick {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 3px solid var(--accent1);
+      position: relative;
+      margin: 10px auto;
+      animation: tickPop .4s ease;
+    }
+    .success-tick::after {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 5px;
+      width: 10px;
+      height: 18px;
+      border: solid var(--accent1);
+      border-width: 0 3px 3px 0;
+      transform: rotate(45deg);
+    }
+    @keyframes tickPop {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
 
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  border-radius: 10px;
-  border: none;
-  background: linear-gradient(90deg, var(--accent1), var(--accent2));
-  color: white;
-  font-weight: 700;
-  cursor: pointer;
-}
+    .site-footer {
+      max-width: 980px;
+      margin: 0 auto;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      padding: 18px 12px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 6px 20px rgba(2,6,23,0.06);
+    }
 
-.small {
-  font-size: 13px;
-  color: var(--muted);
-}
-
-/* Ad placeholder */
-.ads-slot {
-  border-radius: 8px;
-  border: 1px dashed #e1e7f9;
-  padding: 12px;
-  text-align: center;
-  color: #334155;
-  background: #fbfcff;
-  margin-top: 16px;
-}
-
-/* Progress bar */
-.progress {
-  width: 100%;
-  height: 12px;
-  background: #eef2ff;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-top: 10px;
-}
-
-.progress > i {
-  display: block;
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, var(--accent1), var(--accent2));
-  transition: width 0.2s ease;
-}
-
-/* Footer section outside card */
-.site-footer {
-  max-width: 980px;
-  margin: 0 auto;
-  text-align: center;
-  color: var(--muted);
-  font-size: 13px;
-  padding: 18px 12px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 6px 20px rgba(2, 6, 23, 0.06);
-}
-
-/* Responsive */
-@media (max-width: 640px) {
-  body {
-    padding: 20px 12px;
-    align-items: flex-start;
-  }
-  .card {
-    padding: 18px;
-  }
-  .site-footer {
-    padding: 14px;
-  }
-}
-
-</style>
-
+    @media (max-width: 640px) {
+      body { padding: 20px 12px; align-items: flex-start; }
+      .card { padding: 18px; }
+      .site-footer { padding: 14px; }
+    }
+  </style>
 </head>
 <body>
   <div class="container">
     <div class="card">
       <div class="brand">
-        <div class="logo"><span>PDF</span>Convertify</div>
-        <div style="margin-left:auto;text-align:right;font-size:12px;color:var(--muted)">
-          <div>Privacy-first • Client-side</div>
-          <div>Contact: ganesh.kali78@gmail.com</div>
-        </div>
+        <div class="logo">PDF<span>Convertify</span></div>
       </div>
-
-      <p class="lead">Convert PDF pages to PNG, JPG, BMP, WEBP — or extract plain text and download as TXT, DOCX or HTML. All conversion runs in your browser — no uploads, no tracking.</p>
+      <p class="lead">Convert PDF pages to PNG, JPG, BMP, WEBP — or extract text as TXT, DOCX, or HTML.  
+      100% Private. No uploads. All runs in your browser.</p>
 
       <div class="notice-box">
-        🔒 <strong>100% Private:</strong> All conversions happen locally in your browser. <br>
-        📁 <strong>File limit:</strong> Recommended maximum PDF size is 40 MB for smooth performance.
+        <b>🔒 100% Private:</b> All conversions happen locally in your browser.<br>
+        <b>📁 File limit:</b> Recommended maximum PDF size is 40 MB for smooth performance.
       </div>
 
-      <div style="margin-top:16px" class="upload-box">
-        <label for="pdfFile" style="display:block;width:100%;cursor:pointer">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div>
-              <strong>Drag & Drop your PDF here</strong>
-              <div class="small">or click to choose a file</div>
-            </div>
-            <button class="btn" id="chooseBtn">Choose file</button>
-          </div>
-        </label>
-        <input id="pdfFile" type="file" accept="application/pdf">
+      <div class="upload-box">
+        <p><b>Drag & Drop your PDF here</b><br><span class="small">or click to choose a file</span></p>
+        <input type="file" id="fileInput" accept="application/pdf" />
+        <button class="btn" id="chooseFileBtn">Choose file</button>
 
-        <div class="opts" id="formatOptions">
-          <div class="opt selected" data-format="png">PNG</div>
-          <div class="opt" data-format="jpg">JPG</div>
-          <div class="opt" data-format="bmp">BMP</div>
-          <div class="opt" data-format="webp">WEBP</div>
-          <div class="opt" data-format="txt">TXT</div>
-          <div class="opt" data-format="docx">DOCX</div>
-          <div class="opt" data-format="html">HTML</div>
+        <div class="opts">
+          <div class="opt selected">PNG</div>
+          <div class="opt">JPG</div>
+          <div class="opt">BMP</div>
+          <div class="opt">WEBP</div>
+          <div class="opt">TXT</div>
+          <div class="opt">DOCX</div>
+          <div class="opt">HTML</div>
         </div>
 
-        <button class="btn" id="convertBtn" style="margin-top:10px">Convert & Download</button>
-        <div class="progress" id="progress" style="display:none"><i></i></div>
-        <div id="status" class="small" style="margin-top:8px">No file loaded</div>
+        <button class="btn" id="convertBtn">Convert & Download</button>
+        <div class="progress"><i></i></div>
+        <p class="small" id="status">No file loaded</p>
       </div>
 
-      <div class="ads-slot" id="ads">Ad placeholder — paste AdSense code here after approval</div>
+      <div class="ads-slot">Ad placeholder — paste AdSense code here after approval</div>
 
-      <section style="margin-top:24px">
-        <h3>How to use</h3>
-        <ol style="margin:0;padding-left:18px;color:var(--muted)">
-          <li>Choose or drag your PDF (recommended &lt; 40 MB).</li>
-          <li>Select output format: PNG, JPG, TXT, DOCX, etc.</li>
-          <li>Click <strong>Convert & Download</strong> to get your file.</li>
-        </ol>
-      </section>
-
-      <footer>
-        <div style="margin-top:12px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-          <a href="about.html">About</a>
-          <a href="contact.html">Contact</a>
-          <a href="privacy.html">Privacy Policy</a>
-        </div>
-        <div style="margin-top:8px">Made with ❤️ by PDFConvertify</div>
-      </footer>
+      <h3>How to use</h3>
+      <ol class="small">
+        <li>Choose or drag your PDF (recommended &lt; 40 MB).</li>
+        <li>Select output format: PNG, JPG, TXT, DOCX, etc.</li>
+        <li>Click <b>Convert & Download</b> to get your file.</li>
+      </ol>
     </div>
+
+    <footer class="site-footer">
+      <p>
+        <a href="about.html">About</a> •
+        <a href="contact.html">Contact</a> •
+        <a href="privacy.html">Privacy Policy</a>
+      </p>
+      <p>Made with ❤️ by PDFConvertify</p>
+    </footer>
   </div>
 
-  <script src="https://unpkg.com/pdfjs-dist@3.9.179/build/pdf.min.js"></script>
-  <script src="https://unpkg.com/jszip@3.10.1/dist/jszip.min.js"></script>
-  <script src="https://unpkg.com/file-saver@2.0.5/dist/FileSaver.min.js"></script>
-  <script src="https://unpkg.com/docx@8.4.1/build/index.umd.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
   <script>
-    pdfjsLib.GlobalWorkerOptions.workerSrc='https://unpkg.com/pdfjs-dist@3.9.179/build/pdf.worker.min.js';
-    const fileInput=document.getElementById('pdfFile');
-    const chooseBtn=document.getElementById('chooseBtn');
-    const convertBtn=document.getElementById('convertBtn');
-    const status=document.getElementById('status');
-    const formatOptions=document.getElementById('formatOptions');
-    const progressBar=document.getElementById('progress');
-    const progressFill=progressBar.querySelector('i');
-    let loadedPdf=null,pdfArray=null,selectedFormat='png';
+    const fileInput = document.getElementById("fileInput");
+    const chooseFileBtn = document.getElementById("chooseFileBtn");
+    const convertBtn = document.getElementById("convertBtn");
+    const statusText = document.getElementById("status");
+    const progressBar = document.querySelector(".progress i");
+    let selectedFormat = "PNG";
+    let selectedFile = null;
 
-    formatOptions.addEventListener('click',e=>{
-      const opt=e.target.closest('.opt'); if(!opt) return;
-      [...formatOptions.querySelectorAll('.opt')].forEach(o=>o.classList.remove('selected'));
-      opt.classList.add('selected'); selectedFormat=opt.dataset.format;
+    document.querySelectorAll(".opt").forEach(opt => {
+      opt.addEventListener("click", () => {
+        document.querySelectorAll(".opt").forEach(o => o.classList.remove("selected"));
+        opt.classList.add("selected");
+        selectedFormat = opt.textContent.trim();
+      });
     });
 
-    chooseBtn.addEventListener('click',()=>fileInput.click());
-    fileInput.addEventListener('change',async e=>{
-      const f=e.target.files[0]; if(!f) return;
-      if(f.size>40*1024*1024){ if(!confirm('File is larger than 40MB and may be slow or fail. Continue?')) return;}
-      status.textContent=`Loading ${f.name} ...`;
-      pdfArray=await f.arrayBuffer();
-      loadedPdf=await pdfjsLib.getDocument({data:pdfArray}).promise;
-      status.textContent=`Loaded ${f.name} — ${loadedPdf.numPages} page(s)`;
-    });
+    chooseFileBtn.onclick = () => fileInput.click();
+    fileInput.onchange = e => {
+      selectedFile = e.target.files[0];
+      statusText.textContent = selectedFile ? `Loaded: ${selectedFile.name}` : "No file loaded";
+    };
 
-    document.addEventListener('dragover',e=>e.preventDefault());
-    document.addEventListener('drop',async e=>{e.preventDefault();const f=e.dataTransfer.files[0]; if(f && f.type==='application/pdf'){ fileInput.files=e.dataTransfer.files; fileInput.dispatchEvent(new Event('change')); } });
+    convertBtn.onclick = async () => {
+      if (!selectedFile) return alert("Please select a PDF file first!");
+      statusText.textContent = "Converting...";
+      progressBar.style.width = "20%";
 
-    async function renderPageToBlob(pageNum,mime='image/png'){
-      const page=await loadedPdf.getPage(pageNum);
-      const viewport=page.getViewport({scale:2});
-      const canvas=document.createElement('canvas');
-      canvas.width=viewport.width; canvas.height=viewport.height;
-      const ctx=canvas.getContext('2d');
-      await page.render({canvasContext:ctx,viewport}).promise;
-      return new Promise(res=>canvas.toBlob(res,mime));
-    }
+      const arrayBuffer = await selectedFile.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const page = await pdf.getPage(1);
+      const viewport = page.getViewport({ scale: 2 });
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
 
-    async function extractTextAll(updateProgress){
-      let full=''; for(let i=1;i<=loadedPdf.numPages;i++){
-        const page=await loadedPdf.getPage(i); const content=await page.getTextContent();
-        full+=`\n\n--- Page ${i} ---\n\n`+content.items.map(it=>it.str).join(' ');
-        if(updateProgress) updateProgress(i, loadedPdf.numPages);
-      }
-      return full.trim();
-    }
+      await page.render({ canvasContext: ctx, viewport }).promise;
+      progressBar.style.width = "70%";
 
-    function setProgress(current, total){
-      progressBar.style.display='block';
-      const pct = Math.round((current/total)*100);
-      progressFill.style.width = pct+'%';
-      status.textContent = `Processing ${current}/${total} pages (${pct}%)`;
-    }
+      let blob;
+      let outputName = selectedFile.name.replace(/\.pdf$/i, "") + "." + selectedFormat.toLowerCase();
 
-    convertBtn.addEventListener('click',async ()=>{
-      if(!loadedPdf) return alert('Please load a PDF first');
-      status.textContent='Preparing conversion...';
-
-      if(['png','jpg','bmp','webp'].includes(selectedFormat)){
-        const zip=new JSZip();
-        const mime = selectedFormat==='jpg' ? 'image/jpeg' : `image/${selectedFormat}`;
-        for(let i=1;i<=loadedPdf.numPages;i++){
-          setProgress(i, loadedPdf.numPages);
-          const blob = await renderPageToBlob(i, mime);
-          zip.file(`page-${String(i).padStart(3,'0')}.${selectedFormat}`, blob);
-        }
-        const out = await zip.generateAsync({type:'blob'});
-        saveAs(out, `pdfconvertify-pages-${selectedFormat}.zip`);
-        progressFill.style.width='100%';
-        status.textContent='✅ Download ready';
-        return;
+      if (["png", "jpg", "jpeg", "bmp", "webp"].includes(selectedFormat.toLowerCase())) {
+        blob = await new Promise(resolve => canvas.toBlob(resolve, "image/" + selectedFormat.toLowerCase()));
+      } else if (selectedFormat.toLowerCase() === "txt") {
+        const text = (await page.getTextContent()).items.map(i => i.str).join(" ");
+        blob = new Blob([text], { type: "text/plain" });
+      } else if (selectedFormat.toLowerCase() === "html") {
+        const text = (await page.getTextContent()).items.map(i => i.str).join(" ");
+        blob = new Blob([`<html><body>${text}</body></html>`], { type: "text/html" });
+      } else if (selectedFormat.toLowerCase() === "docx") {
+        const text = (await page.getTextContent()).items.map(i => i.str).join(" ");
+        blob = new Blob([text], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
       }
 
-      if(selectedFormat==='txt'){
-        const txt = await extractTextAll(setProgress);
-        saveAs(new Blob([txt],{type:'text/plain'}), 'pdfconvertify-text.txt');
-        status.textContent='✅ Download ready';
-        return;
-      }
+      // ✅ Direct download (no zip)
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = outputName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
 
-      if(selectedFormat==='docx'){
-        const txt = await extractTextAll(setProgress);
-        const {Document,Packer,Paragraph} = window.docx;
-        const doc = new Document();
-        const paras = txt.split('\n').map(l => new Paragraph(l||' '));
-        doc.addSection({children:paras});
-        const blob = await Packer.toBlob(doc);
-        saveAs(blob,'pdfconvertify-text.docx');
-        status.textContent='✅ Download ready';
-        return;
-      }
-
-      if(selectedFormat==='html'){
-        let html='<!doctype html><html><head><meta charset="utf-8"><title>PDF export</title></head><body>';
-        for(let i=1;i<=loadedPdf.numPages;i++){
-          setProgress(i, loadedPdf.numPages);
-          const blob = await renderPageToBlob(i,'image/png');
-          const url = URL.createObjectURL(blob);
-          html += `<div><h3>Page ${i}</h3><img src="${url}" style="max-width:100%"></div>`;
-        }
-        html += '</body></html>';
-        saveAs(new Blob([html],{type:'text/html'}),'pdfconvertify-export.html');
-        status.textContent='✅ Download ready';
-      }
-    });
+      progressBar.style.width = "100%";
+      statusText.innerHTML = '<div class="success-tick"></div>Conversion Complete!';
+    };
   </script>
 </body>
 </html>
+
