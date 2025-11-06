@@ -24,6 +24,53 @@
   </script>
 
   <style>
+    /* Smooth transition for option buttons */
+    .opt {
+      transition: all 0.35s ease-in-out;
+    }
+    .opt.selected {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .opt:hover {
+      transform: scale(1.03);
+    }
+    
+    /* Convert & Clear buttons animation */
+    .convert-btn, .clear-btn {
+      transition: all 0.3s ease-in-out;
+      border-radius: 8px;
+      font-weight: 600;
+      color: white;
+      padding: 10px 18px;
+      border: none;
+      cursor: pointer;
+    }
+    
+    /* Convert button (dark green theme) */
+    .convert-btn {
+      background: linear-gradient(135deg, #2b8a3e, #1d6b2d);
+    }
+    .convert-btn:hover {
+      background: linear-gradient(135deg, #34a94b, #238d38);
+      transform: scale(1.05);
+    }
+    
+    /* Clear All button (red theme) */
+    .clear-btn {
+      background: linear-gradient(135deg, #d62828, #b91c1c);
+    }
+    .clear-btn:hover {
+      background: linear-gradient(135deg, #f03e3e, #c92424);
+      transform: scale(1.05);
+    }
+    
+    /* Optional glow when clicked */
+    .convert-btn:active, .clear-btn:active {
+      transform: scale(0.97);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
     :root{
       --page-bg: linear-gradient(to bottom, #00cc99 20%, #0099ff 100%);
       --card-bg: #ffffff;
@@ -67,6 +114,7 @@
       box-shadow: inset 0 0 20px rgba(0,0,0,0.06), inset 0 0 6px rgba(255,255,255,0.45);
       pointer-events:none; z-index:0;
     }
+   
     .card > *{position:relative;z-index:1}
 
     .brand{display:flex;align-items:center;gap:14px}
@@ -92,10 +140,62 @@
 
     .opts{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
     .opt{padding:8px 12px;border-radius:8px;border:1px solid #e6e9ee;background:#fbfdff;cursor:pointer}
+    /* Smooth gradient animation for selected options */
+    .opt {
+      transition: all 0.35s ease-in-out;
+    }
+    
+    /* When user switches between PNG/JPG/PDF, the background gradient fades smoothly */
+    .opt.selected {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Optional hover enhancement */
+    .opt:hover {
+      transform: scale(1.03);
+    }
+
     .opt.selected{border-color:transparent;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;box-shadow:0 6px 18px rgba(0,0,0,0.08)}
 
     .row{display:flex;gap:10px;align-items:center}
     .btn{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:white;font-weight:700;cursor:pointer}
+    /* Main convert/download buttons */
+    .btn-main {
+      background: linear-gradient(90deg, #007a3d, #00b359);
+      color: #fff;
+    }
+    
+    /* Clear button (red) */
+    .btn-clear {
+      background: linear-gradient(90deg, #ff4d4d, #ff0000);
+      color: #fff;
+    }
+    .btn-clear:hover,
+    .btn-main:hover {
+      opacity: 0.9;
+    }
+    
+    /* Format option colors */
+    .opt[data-format="png"].selected {
+      background: linear-gradient(90deg, #ff9800, #ffb84d); /* orange */
+      color: #fff;
+    }
+    
+    .opt[data-format="jpg"].selected {
+      background: linear-gradient(90deg, #8e24aa, #ba68c8); /* purple */
+      color: #fff;
+    }
+    
+    .opt[data-size="a4"].selected {
+      background: linear-gradient(90deg, #795548, #a1887f); /* brown */
+      color: #fff;
+    }
+    
+    .opt[data-size="letter"].selected {
+      background: linear-gradient(90deg, #607d8b, #90a4ae); /* blue-gray */
+      color: #fff;
+    }
 
     .progress{width:100%;height:12px;background:#eef2ff;border-radius:8px;overflow:hidden;margin-top:10px}
     .progress>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent1),var(--accent2));transition:width .2s ease}
@@ -163,7 +263,7 @@
           </div>
          <!--clear all button -->
           <div style="text-align:center;margin-top:10px;">
-              <button class="btn" id="clearAll">Clear All</button>
+                <button class="btn btn-clear" id="clearAll">Clear All</button>
         </div>
 
           <div class="progress"><i></i></div>
@@ -182,7 +282,7 @@
             <div><strong>Drop images (PNG/JPG) here</strong><div class="small">or click Choose images — reorder thumbnails as needed</div></div>
             <div class="row">
               <input id="imgFiles" type="file" accept="image/*" multiple />
-              <button class="btn" id="imgChoose">Choose images</button>
+              <button class="btn btn-main" id="imgChoose">Choose images</button>
             </div>
           </div>
 
@@ -201,7 +301,7 @@
           <p class="note" id="imgStatus">No images selected</p>
 
           <div style="display:flex;gap:10px;justify-content:center;margin-top:8px">
-            <button class="btn" id="imgToPdf">Merge to PDF</button>
+            <button class="btn btn-main" id="imgToPdf">Merge to PDF</button>
           </div>
         </div>
       </div>
