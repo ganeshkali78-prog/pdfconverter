@@ -1,255 +1,506 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PDFConvertify — Free PDF/Image Converter</title>
-  <link rel="icon" href="favicon.png" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PDFConvertify — Free PDF ⇄ Image Converter</title>
+  <meta name="description" content="Convert PDF to PNG/JPG and images (PNG, JPG) to a single PDF. 100% private: runs in your browser. No upload required.">
+  <meta name="keywords" content="pdf to png,pdf to jpg,image to pdf,png to pdf,jpg to pdf,online converter,free converter,pdfconvertify">
+  <link rel="canonical" href="https://pdfconvertify.netlify.app/">
+  <link rel="icon" href="favicon.ico">
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"SoftwareApplication",
+    "name":"PDFConvertify",
+    "url":"https://pdfconvertify.netlify.app/",
+    "description":"Free online PDF ⇄ Image converter. Convert PDF to PNG/JPG and images to single PDF. Client-side, no uploads.",
+    "applicationCategory":"UtilitiesApplication",
+    "operatingSystem":"Any",
+    "offers": { "@type":"Offer", "price":"0", "priceCurrency":"INR" }
+  }
+  </script>
+
   <style>
-    body {
-      font-family: "Segoe UI", sans-serif;
-      background: linear-gradient(135deg, #00c6ff, #0072ff);
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
+    :root{
+      --page-bg: linear-gradient(to bottom, #00cc99 20%, #0099ff 100%);
+      --card-bg: #ffffff;
+      --muted: #6b7280;
+      --accent1: #00cc99;
+      --accent2: #0099ff;
+      --radius: 14px;
     }
-    .card {
-      background: white;
-      border-radius: 20px;
-      padding: 40px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-      width: 90%;
-      max-width: 850px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    h1 {
-      color: #008cff;
-      margin-bottom: 25px;
-    }
-    .tabs {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-    .tab {
-      border: none;
-      padding: 10px 25px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 15px;
-      font-weight: 600;
-      transition: 0.3s;
-      background: #f2f2f2;
-      margin: 0 5px;
-    }
-    .tab.active {
-      background: #008cff;
-      color: white;
-    }
-    .converter {
-      display: none;
-      animation: fade 0.4s ease-in-out;
-    }
-    .converter.active {
-      display: block;
-    }
-    @keyframes fade {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .dropzone {
-      border: 2px dashed #ccc;
-      border-radius: 10px;
-      padding: 30px;
-      cursor: pointer;
-      color: #555;
-      margin: 20px 0;
-    }
-    .progress-bar {
-      height: 8px;
-      background: #008cff22;
-      border-radius: 8px;
-      overflow: hidden;
-      margin: 20px 0;
-    }
-    .progress {
-      height: 100%;
-      background: #008cff;
-      width: 0%;
-      transition: width 0.3s;
-    }
-    .btn {
-      background: #008cff;
-      color: white;
-      padding: 10px 25px;
-      border-radius: 6px;
-      font-weight: 600;
-      border: none;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .btn:hover {
-      background: #0066d9;
-    }
-    .footer {
-      margin-top: 35px;
-      font-size: 13px;
-      color: #777;
-    }
-    .footer a {
-      color: #008cff;
-      text-decoration: none;
-      margin: 0 5px;
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background:var(--page-bg);
+      background-attachment: fixed;
+      min-height:100vh;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding:40px 20px;
+      color:#111;
     }
 
-    /* Image preview grid */
-    .preview-grid {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 15px;
+    .container{width:100%;max-width:1000px}
+
+    /* card */
+    .card{
+      background:var(--card-bg);
+      border-radius:var(--radius);
+      box-shadow:0 12px 30px rgba(2,6,23,0.12);
+      padding:28px;
+      position:relative;
+      margin:0 auto 40px;
+      overflow:visible;
     }
-    .preview-item {
-      position: relative;
-      width: 120px;
-      text-align: center;
-      cursor: move;
+    .card::before{
+      content:"";
+      position:absolute;
+      top:10px;left:10px;right:10px;bottom:10px;
+      border-radius:calc(var(--radius) - 2px);
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.06), inset 0 0 6px rgba(255,255,255,0.45);
+      pointer-events:none; z-index:0;
     }
-    .preview-item img {
-      width: 100%;
-      border-radius: 10px;
-      border: 2px solid #ddd;
+    .card > *{position:relative;z-index:1}
+
+    .brand{display:flex;align-items:center;gap:14px}
+    .logo{font-weight:800;font-size:22px}
+    .logo span{background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;color:transparent}
+    .lead{color:var(--muted);margin-top:6px}
+
+    .tabs{display:flex;gap:8px;border-radius:10px;overflow:hidden;margin-top:14px}
+    .tab{padding:8px 14px;cursor:pointer;background:rgba(0,0,0,0.03);border-radius:8px;font-weight:700}
+    .tab.active{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff}
+
+    /* panel fade */
+    .panel{opacity:0;max-height:0;overflow:hidden;transform:translateY(6px);transition:all .28s ease}
+    .panel.active{opacity:1;max-height:4000px;transform:none}
+
+    .notice-box{background:#f0fdf4;border-left:4px solid var(--accent1);padding:12px;border-radius:10px;margin-top:10px;color:#065f46;font-size:14px}
+    .lead.note{font-weight:600}
+
+    /* upload areas */
+    .upload-area{margin-top:18px;border-radius:12px;border:1px solid rgba(0,0,0,0.06);padding:18px;background:#fff;display:flex;flex-direction:column;gap:12px}
+    .drag-hint{display:flex;justify-content:space-between;align-items:center}
+    input[type=file]{display:none}
+
+    .opts{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    .opt{padding:8px 12px;border-radius:8px;border:1px solid #e6e9ee;background:#fbfdff;cursor:pointer}
+    .opt.selected{border-color:transparent;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;box-shadow:0 6px 18px rgba(0,0,0,0.08)}
+
+    .row{display:flex;gap:10px;align-items:center}
+    .btn{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:white;font-weight:700;cursor:pointer}
+
+    .progress{width:100%;height:12px;background:#eef2ff;border-radius:8px;overflow:hidden;margin-top:10px}
+    .progress>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent1),var(--accent2));transition:width .2s ease}
+
+    .note{margin-top:6px;text-align:center;font-size:13px;color:#374151}
+
+    .success-tick{width:40px;height:40px;border-radius:50%;border:3px solid var(--accent1);position:relative;margin:10px auto;animation:tickPop .36s ease}
+    .success-tick::after{content:"";position:absolute;left:10px;top:6px;width:10px;height:18px;border:solid var(--accent1);border-width:0 3px 3px 0;transform:rotate(45deg)}
+    @keyframes tickPop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+
+    /* image list for reorder (Image -> PDF) */
+    .thumb-list{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+    .thumb{
+      width:120px;height:120px;border-radius:8px;border:1px solid #e6e9ee;background:#fff;padding:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:grab;
     }
-    .page-label {
-      font-size: 13px;
-      color: #555;
-      margin-top: 5px;
+    .thumb img{max-width:100%;max-height:68px;display:block;margin-bottom:6px}
+    .thumb .label{font-size:12px;color:var(--muted);text-align:center;word-break:break-word}
+
+    .site-footer{max-width:980px;margin:0 auto;text-align:center;color:var(--muted);font-size:13px;padding:18px 12px;border-radius:10px;background:rgba(255,255,255,0.9);box-shadow:0 6px 20px rgba(2,6,23,0.06)}
+
+    @media (max-width:720px){
+      .thumb{width:100px;height:100px}
+      .card{padding:18px}
     }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>PDFConvertify</h1>
+  <div class="container">
+    <div class="card">
+      <div class="brand">
+        <div class="logo">PDF<span>Convertify</span></div>
+        <div style="margin-left:auto;text-align:right;font-size:12px;color:var(--muted)">
+          Privacy-first • Client-side<br>Contact: ganesh.kali78@gmail.com
+        </div>
+      </div>
 
-    <div class="tabs">
-      <button class="tab active" id="pdfToImageTab">PDF → Image</button>
-      <button class="tab" id="imageToPdfTab">Image → PDF</button>
+      <p class="lead">Convert PDF ↔ Image quickly — client-side only. Choose a tab or upload a file and the tool will auto-detect type.</p>
+
+      <div class="tabs" role="tablist" aria-label="Converter tabs">
+        <div class="tab active" data-tab="pdf2img">PDF → Image</div>
+        <div class="tab" data-tab="img2pdf">Image → PDF</div>
+      </div>
+
+      <div class="notice-box">
+        🔒 <strong>100% Private:</strong> All conversions happen locally in your browser.
+      </div>
+
+      <!-- PDF → Image panel -->
+      <div id="pdf2img" class="panel active" aria-hidden="false">
+        <div class="upload-area">
+          <div class="drag-hint">
+            <div><strong>Drop a PDF here</strong><div class="small">or click Choose file</div></div>
+            <div class="row">
+              <input id="pdfFile" type="file" accept="application/pdf" />
+              <button class="btn" id="pdfChoose">Choose file</button>
+            </div>
+          </div>
+
+          <div style="margin-top:8px">
+            <div class="small">Convert PDF pages to:</div>
+            <div class="opts" id="pdfFormatOpts">
+              <div class="opt selected" data-format="png">PNG</div>
+              <div class="opt" data-format="jpg">JPG</div>
+            </div>
+          </div>
+
+          <div class="progress"><i></i></div>
+          <p class="note">💡 Multiple pages will be downloaded automatically as a ZIP file (single page downloads directly).</p>
+          <p class="note" id="pdfStatus">No file loaded</p>
+          <div style="display:flex;gap:10px;justify-content:center;margin-top:8px">
+            <button class="btn" id="pdfConvert">Convert & Download</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Image → PDF panel -->
+      <div id="img2pdf" class="panel" aria-hidden="true">
+        <div class="upload-area">
+          <div class="drag-hint">
+            <div><strong>Drop images (PNG/JPG) here</strong><div class="small">or click Choose images — reorder thumbnails as needed</div></div>
+            <div class="row">
+              <input id="imgFiles" type="file" accept="image/*" multiple />
+              <button class="btn" id="imgChoose">Choose images</button>
+            </div>
+          </div>
+
+          <div style="margin-top:8px">
+            <div class="small">Output PDF page size:</div>
+            <div class="opts" id="imgPdfOpts">
+              <div class="opt selected" data-size="a4">A4</div>
+              <div class="opt" data-size="letter">Letter</div>
+            </div>
+          </div>
+
+          <div class="thumb-list" id="thumbs"></div>
+
+          <div class="progress"><i></i></div>
+          <p class="note">💡 Select multiple images; drag thumbnails to reorder pages in the resulting PDF.</p>
+          <p class="note" id="imgStatus">No images selected</p>
+
+          <div style="display:flex;gap:10px;justify-content:center;margin-top:8px">
+            <button class="btn" id="imgToPdf">Merge to PDF</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px" class="ads-slot">Ad placeholder — paste AdSense code here after approval</div>
+
+      <section style="margin-top:18px">
+        <h3>How to use</h3>
+        <ol class="small">
+          <li>Choose the correct tab (PDF → Image or Image → PDF).</li>
+          <li>Upload files (single or multiple) — reorder images if needed.</li>
+          <li>Click Convert / Merge and download the result.</li>
+        </ol>
+      </section>
     </div>
 
-    <!-- PDF to Image -->
-    <div id="pdfToImage" class="converter active">
-      <div class="dropzone" id="pdfDrop">Select or Drop PDF</div>
-      <button class="btn" id="convertPdfToImg">Convert</button>
-      <div class="progress-bar"><div class="progress" id="progress1"></div></div>
-      <p id="status1"></p>
-    </div>
-
-    <!-- Image to PDF -->
-    <div id="imageToPdf" class="converter">
-      <div class="dropzone" id="imgDrop">Select Images (JPG/PNG)</div>
-      <div class="preview-grid" id="previewGrid"></div>
-      <button class="btn" id="convertImgToPdf">Convert to PDF</button>
-      <div class="progress-bar"><div class="progress" id="progress2"></div></div>
-      <p id="status2"></p>
-    </div>
-
-    <div class="footer">
-      © 2025 PDFConvertify — <a href="#">About</a> | <a href="#">Contact</a> | <a href="#">Privacy Policy</a>
-    </div>
+    <footer class="site-footer">
+      <p><a href="about.html">About</a> • <a href="contact.html">Contact</a> • <a href="privacy.html">Privacy Policy</a></p>
+      <p>Made with ❤️ by PDFConvertify</p>
+    </footer>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+  <!-- Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
   <script>
-    const pdfTab = document.getElementById("pdfToImageTab");
-    const imgTab = document.getElementById("imageToPdfTab");
-    const pdfSection = document.getElementById("pdfToImage");
-    const imgSection = document.getElementById("imageToPdf");
-    const progress1 = document.getElementById("progress1");
-    const progress2 = document.getElementById("progress2");
+  // Utilities
+  const $ = sel => document.querySelector(sel);
+  const $$ = sel => Array.from(document.querySelectorAll(sel));
 
-    pdfTab.onclick = () => {
-      pdfTab.classList.add("active");
-      imgTab.classList.remove("active");
-      pdfSection.classList.add("active");
-      imgSection.classList.remove("active");
-    };
-
-    imgTab.onclick = () => {
-      imgTab.classList.add("active");
-      pdfTab.classList.remove("active");
-      imgSection.classList.add("active");
-      pdfSection.classList.remove("active");
-    };
-
-    // Image → PDF reorderable preview
-    const previewGrid = document.getElementById("previewGrid");
-    let imageFiles = [];
-
-    document.getElementById("imgDrop").onclick = async () => {
-      const input = document.createElement("input");
-      input.type = "file";
-      input.accept = "image/*";
-      input.multiple = true;
-      input.onchange = (e) => {
-        imageFiles = Array.from(e.target.files);
-        showPreview();
-      };
-      input.click();
-    };
-
-    function showPreview() {
-      previewGrid.innerHTML = "";
-      imageFiles.forEach((file, i) => {
-        const div = document.createElement("div");
-        div.className = "preview-item";
-        const img = document.createElement("img");
-        img.src = URL.createObjectURL(file);
-        const label = document.createElement("div");
-        label.className = "page-label";
-        label.textContent = "Page " + (i + 1);
-        div.appendChild(img);
-        div.appendChild(label);
-        previewGrid.appendChild(div);
+  // Tabs
+  $$('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      $$('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const target = tab.dataset.tab;
+      $$('.panel').forEach(p => {
+        if (p.id === target) { p.classList.add('active'); p.setAttribute('aria-hidden','false'); }
+        else { p.classList.remove('active'); p.setAttribute('aria-hidden','true'); }
       });
-      new Sortable(previewGrid, { animation: 150 });
+    });
+  });
+
+  // Smart detection: if user drops/uploads an item, switch to appropriate tab
+  function switchToTab(name) {
+    $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+    $$('.panel').forEach(p => p.classList.toggle('active', p.id === name));
+  }
+
+  // PDF -> Image elements
+  const pdfFileInput = $('#pdfFile');
+  const pdfChoose = $('#pdfChoose');
+  const pdfFormatOpts = $('#pdfFormatOpts');
+  const pdfConvertBtn = $('#pdfConvert');
+  const pdfStatus = $('#pdfStatus');
+  const pdfProgress = $('#pdf2img .progress i');
+
+  // Image -> PDF elements
+  const imgFileInput = $('#imgFiles');
+  const imgChoose = $('#imgChoose');
+  const thumbList = $('#thumbs');
+  const imgToPdfBtn = $('#imgToPdf');
+  const imgStatus = $('#imgStatus');
+  const imgProgress = $('#img2pdf .progress i');
+
+  // Format/size selection handling
+  function setupOptions(containerSel, callback) {
+    const opts = document.querySelectorAll(containerSel + ' .opt');
+    opts.forEach(o => o.addEventListener('click', () => {
+      opts.forEach(x => x.classList.remove('selected'));
+      o.classList.add('selected');
+      if (callback) callback(o.dataset);
+    }));
+  }
+  setupOptions('#pdfFormatOpts', d => {});
+  setupOptions('#imgPdfOpts', d => {});
+
+  // Allow clicking choose buttons to open file dialog
+  pdfChoose.addEventListener('click', () => pdfFileInput.click());
+  imgChoose.addEventListener('click', () => imgFileInput.click());
+
+  // Drag & drop handlers for both panels
+  function enableDropArea(areaSelector, fileHandler){
+    const area = document.querySelector(areaSelector + ' .upload-area');
+    ['dragenter','dragover'].forEach(ev => area.addEventListener(ev, e => { e.preventDefault(); area.classList.add('dragover'); }));
+    ['dragleave','drop'].forEach(ev => area.addEventListener(ev, e => { if(ev==='drop') { e.preventDefault(); area.classList.remove('dragover'); fileHandler(e.dataTransfer.files); } else { area.classList.remove('dragover'); } }));
+  }
+
+  enableDropArea('#pdf2img', files => {
+    if (!files || files.length===0) return;
+    const f = files[0];
+    if (f.type === 'application/pdf') {
+      pdfFileInput.files = files;
+      pdfFileInput.dispatchEvent(new Event('change'));
+      switchToTab('pdf2img');
+    } else {
+      alert('Please drop a PDF file here.');
+    }
+  });
+
+  enableDropArea('#img2pdf', files => {
+    if (!files || files.length===0) return;
+    // accept images
+    const images = Array.from(files).filter(f => f.type.startsWith('image/'));
+    if (images.length === 0) { alert('Please drop image files (PNG/JPG)'); return; }
+    // populate file input (not strictly necessary) and thumbnails
+    imgFileInput.files = files;
+    imgFileInput.dispatchEvent(new Event('change'));
+    switchToTab('img2pdf');
+  });
+
+  // PDF -> Image logic
+  pdfFileInput.addEventListener('change', async (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    pdfStatus.textContent = `Loaded: ${f.name}`;
+    switchToTab('pdf2img');
+  });
+
+  pdfFormatOpts.addEventListener('click', (ev) => {
+    const opt = ev.target.closest('.opt');
+    if (!opt) return;
+    // selected style handled by setupOptions
+  });
+
+  pdfConvertBtn.addEventListener('click', async () => {
+    const f = pdfFileInput.files[0];
+    if (!f) return alert('Please choose a PDF first.');
+    const format = $('#pdfFormatOpts .opt.selected').dataset.format || 'png';
+    pdfStatus.textContent = 'Converting...';
+    pdfProgress.style.width = '8%';
+
+    try {
+      const arrayBuffer = await f.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const total = pdf.numPages;
+      const base = f.name.replace(/\.pdf$/i,'');
+      const zip = new JSZip();
+
+      for (let p = 1; p <= total; p++) {
+        const page = await pdf.getPage(p);
+        const viewport = page.getViewport({ scale: 2 });
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(viewport.width);
+        canvas.height = Math.round(viewport.height);
+        const ctx = canvas.getContext('2d');
+        await page.render({ canvasContext: ctx, viewport }).promise;
+
+        pdfProgress.style.width = `${8 + (p/total)*80}%`;
+
+        if (total === 1) {
+          // direct download
+          const blob = await new Promise(res => canvas.toBlob(res, `image/${format}`));
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = `${base}.${format}`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } else {
+          const blob = await new Promise(res => canvas.toBlob(res, `image/${format}`));
+          zip.file(`${base}_page${p}.${format}`, blob);
+        }
+      }
+
+      if (total > 1) {
+        pdfProgress.style.width = '95%';
+        const zipBlob = await zip.generateAsync({ type: 'blob' }, meta => {
+          pdfProgress.style.width = `${95 * (meta.percent/100)}%`;
+        });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(zipBlob);
+        link.download = `${base}_images.zip`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      pdfProgress.style.width = '100%';
+      $('#pdfStatus').innerHTML = '<div class="success-tick"></div>Conversion Complete!';
+    } catch (err) {
+      console.error(err);
+      alert('Conversion failed — see console for details.');
+      pdfProgress.style.width = '0%';
+    }
+  });
+
+  // Image -> PDF logic (with thumbnails and reorder)
+  function clearThumbs(){ thumbList.innerHTML = ''; imgStatus.textContent = 'No images selected'; imgProgress.style.width = '0%'; }
+  imgFileInput.addEventListener('change', async (e) => {
+    const files = Array.from(e.target.files).filter(f => f.type.startsWith('image/'));
+    if (files.length === 0) { clearThumbs(); return; }
+    thumbList.innerHTML = '';
+    imgStatus.textContent = `${files.length} image(s) selected`;
+    // create thumbs
+    for (let i = 0; i < files.length; i++) {
+  const f = files[i];
+  const url = URL.createObjectURL(f);
+  const div = document.createElement('div');
+  div.className = 'thumb';
+  div.dataset.index = i;
+  div.innerHTML = `
+    <img src="${url}" alt="${f.name}">
+    <div class="label">${f.name}</div>
+    <div class="label" style="color:#111;font-weight:600;">Page ${i + 1}</div>
+  `;
+  thumbList.appendChild(div);
+}
+
+    // make reorderable
+    if (window.Sortable) {
+       Sortable.create(thumbList, {
+            animation: 150,
+            onSort: () => updatePageLabels()
+       });
+  
+      function updatePageLabels() {
+        const thumbs = thumbList.children;
+        for (let i = 0; i < thumbs.length; i++) {
+          const label = thumbs[i].querySelectorAll('.label')[1];
+          if (label) label.textContent = `Page ${i + 1}`;
+        }
+}
+
+    }
+  });
+
+  imgToPdfBtn.addEventListener('click', async () => {
+    // gather images from thumbs in current order
+    const thumbs = Array.from(thumbList.children);
+    if (thumbs.length === 0) return alert('Please select images first.');
+    imgStatus.textContent = 'Merging images into PDF...';
+    imgProgress.style.width = '8%';
+
+    // page size selection
+    const size = $('#imgPdfOpts .opt.selected').dataset.size || 'a4';
+    // jsPDF dimensions in points (pt), but we'll use mm via jsPDF 'mm' units
+    // A4: 210 x 297 mm ; Letter: 215.9 x 279.4 mm
+    const pageSizes = { a4: {w:210, h:297}, letter: {w:215.9, h:279.4} };
+    const ps = pageSizes[size] || pageSizes.a4;
+
+    // use jsPDF (umd)
+    const { jsPDF } = window.jspdf;
+
+    const doc = new jsPDF({ unit: 'mm', format: [ps.w, ps.h] });
+
+    for (let i = 0; i < thumbs.length; i++) {
+      const imgEl = thumbs[i].querySelector('img');
+      // create a canvas to ensure consistent orientation & compression
+      await ensureImageLoaded(imgEl);
+      const canvas = document.createElement('canvas');
+      const imgW = imgEl.naturalWidth;
+      const imgH = imgEl.naturalHeight;
+      // convert to mm scale: jsPDF uses mm; we will fit image to page preserving aspect ratio
+      const pageWpx = imgW; const pageHpx = imgH;
+      const ratio = Math.min(ps.w / (imgW * 0.264583), ps.h / (imgH * 0.264583)); // px to mm approx 1px = 0.264583 mm
+      const targetWmm = imgW * 0.264583 * ratio;
+      const targetHmm = imgH * 0.264583 * ratio;
+
+      // draw onto canvas at natural size and get dataURL
+      canvas.width = imgW; canvas.height = imgH;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.drawImage(imgEl, 0, 0, imgW, imgH);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+
+      if (i > 0) doc.addPage([ps.w, ps.h], 'portrait');
+      // calculate center position
+      const x = (ps.w - targetWmm) / 2;
+      const y = (ps.h - targetHmm) / 2;
+      doc.addImage(dataUrl, 'JPEG', x, y, targetWmm, targetHmm);
+      imgProgress.style.width = `${8 + ((i+1)/thumbs.length)*80}%`;
     }
 
-    document.getElementById("convertImgToPdf").onclick = async () => {
-      if (!imageFiles.length) return alert("Please select images first!");
-      progress2.style.width = "50%";
-      const { PDFDocument } = PDFLib;
-      const pdfDoc = await PDFDocument.create();
-      const order = [...previewGrid.children].map((child) =>
-        Array.from(previewGrid.children).indexOf(child)
-      );
-      for (let child of previewGrid.children) {
-        const index = Array.from(previewGrid.children).indexOf(child);
-        const file = imageFiles[index];
-        const imgBytes = await file.arrayBuffer();
-        let img;
-        if (file.type === "image/png")
-          img = await pdfDoc.embedPng(imgBytes);
-        else img = await pdfDoc.embedJpg(imgBytes);
-        const page = pdfDoc.addPage([img.width, img.height]);
-        page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
-      }
-      progress2.style.width = "90%";
-      const pdfBytes = await pdfDoc.save();
-      const blob = new Blob([pdfBytes], { type: "application/pdf" });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "converted.pdf";
-      link.click();
-      progress2.style.width = "100%";
-      document.getElementById("status2").textContent = "✅ Conversion Complete!";
-    };
+    // output PDF blob and trigger download
+    const pdfBlob = doc.output('blob');
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(pdfBlob);
+    link.download = `images_merged.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    imgProgress.style.width = '100%';
+    imgStatus.innerHTML = '<div class="success-tick"></div>PDF ready';
+  });
+
+  // helper: ensure image is loaded (for images created via object URL)
+  function ensureImageLoaded(imgEl) {
+    return new Promise((resolve) => {
+      if (imgEl.complete && imgEl.naturalWidth) return resolve();
+      imgEl.addEventListener('load', () => resolve());
+      imgEl.addEventListener('error', () => resolve());
+    });
+  }
+
+  // Extra: auto-detect file type if user drags a single file from outside
+  // If user drops a PDF on the image tab or an image on the pdf tab, switch automatically:
+  // (already handled by drop handlers above)
+
   </script>
 </body>
 </html>
