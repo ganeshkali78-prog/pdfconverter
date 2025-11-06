@@ -34,27 +34,29 @@
   }
 
   .container{width:100%;max-width:980px}
-  .card{
-    background:var(--card-bg);
-    border-radius:var(--radius);
-    box-shadow:0 12px 30px rgba(2,6,23,0.12);
-    padding:28px;
-    position:relative;
-  }
+  .card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 30px rgba(2, 6, 23, 0.12);
+  padding: 28px;
+  position: relative;
+  margin-bottom: 60px; /* 🟢 Add space below the card */
+}
 
-  /* 🌟 ADD THIS BLOCK */
-  .card::before {
-    content:"";
-    position:absolute;
-    top:10px;
-    left:10px;
-    right:10px;
-    bottom:10px;
-    border-radius:var(--radius);
-    box-shadow:inset 0 0 20px rgba(0,0,0,0.06),
-               inset 0 0 6px rgba(255,255,255,0.4);
-    pointer-events:none;
-  }
+/* inner margin / border effect like a soft Word-page outline */
+.card::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  border-radius: var(--radius);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.06),
+              inset 0 0 6px rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+}
+
   /* 🌟 END BLOCK */
 
   .brand{display:flex;align-items:center;gap:14px}
@@ -69,7 +71,15 @@
   .opt{padding:8px 12px;border-radius:8px;border:1px solid #e6e9ee;background:#fbfdff;cursor:pointer}
   .opt.selected{border-color:transparent;box-shadow:0 6px 18px rgba(0,0,0,0.08);background:linear-gradient(90deg,var(--accent1),var(--accent2));color:white}
   .small{font-size:13px;color:var(--muted)}
-  footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
+  footer {
+  margin-top: 40px;  /* more gap above footer */
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  position: relative;
+  z-index: 2;
+   }
+
   .ads-slot{border-radius:8px;border:1px dashed #e1e7f9;padding:12px;text-align:center;color:#334155;background:#fbfcff;margin-top:16px}
   .progress{width:100%;height:12px;background:#eef2ff;border-radius:8px;overflow:hidden;margin-top:10px}
   .progress > i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--accent1),var(--accent2));transition:width .2s ease}
