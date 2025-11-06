@@ -1,328 +1,255 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="description" content="Free online PDF ↔ Image converter. Convert PDF to JPG/PNG or JPG/PNG to PDF instantly." />
-<title>PDF ↔ Image Converter | PDFConvertify</title>
-<link rel="icon" href="favicon.png" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDFConvertify — Free PDF/Image Converter</title>
+  <link rel="icon" href="favicon.png" />
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      width: 90%;
+      max-width: 850px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    h1 {
+      color: #008cff;
+      margin-bottom: 25px;
+    }
+    .tabs {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .tab {
+      border: none;
+      padding: 10px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      transition: 0.3s;
+      background: #f2f2f2;
+      margin: 0 5px;
+    }
+    .tab.active {
+      background: #008cff;
+      color: white;
+    }
+    .converter {
+      display: none;
+      animation: fade 0.4s ease-in-out;
+    }
+    .converter.active {
+      display: block;
+    }
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .dropzone {
+      border: 2px dashed #ccc;
+      border-radius: 10px;
+      padding: 30px;
+      cursor: pointer;
+      color: #555;
+      margin: 20px 0;
+    }
+    .progress-bar {
+      height: 8px;
+      background: #008cff22;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 20px 0;
+    }
+    .progress {
+      height: 100%;
+      background: #008cff;
+      width: 0%;
+      transition: width 0.3s;
+    }
+    .btn {
+      background: #008cff;
+      color: white;
+      padding: 10px 25px;
+      border-radius: 6px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .btn:hover {
+      background: #0066d9;
+    }
+    .footer {
+      margin-top: 35px;
+      font-size: 13px;
+      color: #777;
+    }
+    .footer a {
+      color: #008cff;
+      text-decoration: none;
+      margin: 0 5px;
+    }
 
-<!-- Libraries -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
-
-<style>
-:root{
-  --page-bg:linear-gradient(to bottom,#00cc99 20%,#0099ff 100%);
-  --card-bg:#fff;
-  --muted:#6b7280;
-  --accent1:#00cc99;
-  --accent2:#0099ff;
-  --radius:14px;
-}
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  font-family:Inter,ui-sans-serif,system-ui;
-  background:var(--page-bg);
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:28px;
-  color:#111;
-}
-.container{width:100%;max-width:980px}
-.card{
-  background:var(--card-bg);
-  border-radius:var(--radius);
-  box-shadow:0 12px 30px rgba(2,6,23,0.12);
-  padding:28px;
-  position:relative;
-}
-.card::before{
-  content:"";
-  position:absolute;
-  top:8px;left:8px;right:8px;bottom:8px;
-  border-radius:var(--radius);
-  box-shadow:inset 0 0 20px rgba(0,0,0,0.06),inset 0 0 5px rgba(255,255,255,0.4);
-  pointer-events:none;
-}
-.logo{font-weight:800;font-size:22px;text-align:center;margin-bottom:18px;}
-.logo span{background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;color:transparent}
-.tabs{display:flex;justify-content:center;gap:8px;margin-bottom:20px}
-.tab-btn{
-  padding:10px 16px;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-  font-weight:600;
-  background:#f1f5f9;
-  transition:background .2s;
-}
-.tab-btn.active{
-  background:linear-gradient(90deg,var(--accent1),var(--accent2));
-  color:#fff;
-}
-.tab-content{display:none;animation:fade .3s ease}
-.tab-content.active{display:block}
-@keyframes fade{from{opacity:0}to{opacity:1}}
-
-.upload-box{
-  border-radius:12px;
-  border:1px solid rgba(0,0,0,0.06);
-  padding:18px;
-  background:#fff;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:12px;
-}
-input[type=file]{display:none}
-.btn{
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  padding:10px 14px;
-  border-radius:10px;
-  border:none;
-  background:linear-gradient(90deg,var(--accent1),var(--accent2));
-  color:#fff;
-  font-weight:700;
-  cursor:pointer;
-}
-.progress-container{width:100%;background:#eef2ff;border-radius:8px;overflow:hidden;height:12px;margin-top:10px}
-.progress-bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent1),var(--accent2));transition:width .2s ease}
-.success-container{text-align:center;margin-top:20px}
-.tick-mark{
-  font-size:40px;
-  color:var(--accent1);
-  animation:pop .5s ease;
-}
-@keyframes pop{0%{transform:scale(0)}80%{transform:scale(1.2)}100%{transform:scale(1)}}
-.download-btn{
-  display:inline-block;
-  margin-top:10px;
-  background:linear-gradient(90deg,var(--accent1),var(--accent2));
-  color:#fff;
-  padding:10px 18px;
-  border-radius:10px;
-  text-decoration:none;
-  font-weight:700;
-}
-
-/* thumbnails */
-.sortable-list{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  margin-top:15px;
-}
-.thumb-wrapper{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  margin:8px;
-  border-radius:10px;
-  overflow:hidden;
-  background:#f8fafc;
-  box-shadow:0 2px 6px rgba(0,0,0,0.08);
-  cursor:grab;
-  transition:transform .15s ease;
-}
-.thumb-wrapper:active{transform:scale(0.98)}
-.thumb{width:120px;height:120px;object-fit:cover}
-.page-label{
-  font-size:13px;
-  color:#475569;
-  background:#f1f5f9;
-  width:100%;
-  text-align:center;
-  padding:4px 0;
-  border-top:1px solid #e2e8f0;
-}
-footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
-</style>
+    /* Image preview grid */
+    .preview-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+    }
+    .preview-item {
+      position: relative;
+      width: 120px;
+      text-align: center;
+      cursor: move;
+    }
+    .preview-item img {
+      width: 100%;
+      border-radius: 10px;
+      border: 2px solid #ddd;
+    }
+    .page-label {
+      font-size: 13px;
+      color: #555;
+      margin-top: 5px;
+    }
+  </style>
 </head>
-
 <body>
-<div class="container">
   <div class="card">
-    <div class="logo"><span>PDFConvertify</span></div>
+    <h1>PDFConvertify</h1>
 
     <div class="tabs">
-      <button id="tabPdfToImg" class="tab-btn active">PDF → Image</button>
-      <button id="tabImgToPdf" class="tab-btn">Image → PDF</button>
+      <button class="tab active" id="pdfToImageTab">PDF → Image</button>
+      <button class="tab" id="imageToPdfTab">Image → PDF</button>
     </div>
 
-    <!-- PDF → Image -->
-    <div id="pdfToImage" class="tab-content active">
-      <div class="upload-box">
-        <p>Select PDF file</p>
-        <input type="file" id="pdfFile" accept="application/pdf" />
-        <label for="pdfFile" class="btn">Choose PDF</label>
-      </div>
-      <div id="progressPdf" class="progress-container hidden"><div class="progress-bar"></div></div>
-      <div id="downloadPdf" class="success-container hidden">
-        <div class="tick-mark">✔</div>
-        <p>Conversion Complete!</p>
-        <a id="pdfDownloadLink" class="download-btn" download>Download</a>
-      </div>
+    <!-- PDF to Image -->
+    <div id="pdfToImage" class="converter active">
+      <div class="dropzone" id="pdfDrop">Select or Drop PDF</div>
+      <button class="btn" id="convertPdfToImg">Convert</button>
+      <div class="progress-bar"><div class="progress" id="progress1"></div></div>
+      <p id="status1"></p>
     </div>
 
-    <!-- Image → PDF -->
-    <div id="imageToPdf" class="tab-content">
-      <div class="upload-box">
-        <p>Select Images (JPG/PNG)</p>
-        <input type="file" id="imageFiles" multiple accept="image/png, image/jpeg" />
-        <label for="imageFiles" class="btn">Choose Images</label>
-      </div>
-      <div id="sortableList" class="sortable-list"></div>
-      <button id="convertImageToPdfBtn" class="btn" disabled>Convert to PDF</button>
-      <div id="progressContainer" class="progress-container hidden"><div id="progressBar" class="progress-bar"></div></div>
-      <div id="downloadContainer" class="hidden success-container">
-        <div class="tick-mark">✔</div>
-        <p>Conversion Complete!</p>
-        <a id="downloadLink" class="download-btn" download>Download File</a>
-      </div>
+    <!-- Image to PDF -->
+    <div id="imageToPdf" class="converter">
+      <div class="dropzone" id="imgDrop">Select Images (JPG/PNG)</div>
+      <div class="preview-grid" id="previewGrid"></div>
+      <button class="btn" id="convertImgToPdf">Convert to PDF</button>
+      <div class="progress-bar"><div class="progress" id="progress2"></div></div>
+      <p id="status2"></p>
     </div>
 
-    <footer>© 2025 PDFConvertify — Free PDF/Image Converter</footer>
+    <div class="footer">
+      © 2025 PDFConvertify — <a href="#">About</a> | <a href="#">Contact</a> | <a href="#">Privacy Policy</a>
+    </div>
   </div>
-</div>
 
-<script>
-const pdfInput=document.getElementById("pdfFile");
-const pdfProgress=document.querySelector("#progressPdf .progress-bar");
-const pdfProgressBox=document.getElementById("progressPdf");
-const pdfDownload=document.getElementById("downloadPdf");
-const pdfDownloadLink=document.getElementById("pdfDownloadLink");
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <script>
+    const pdfTab = document.getElementById("pdfToImageTab");
+    const imgTab = document.getElementById("imageToPdfTab");
+    const pdfSection = document.getElementById("pdfToImage");
+    const imgSection = document.getElementById("imageToPdf");
+    const progress1 = document.getElementById("progress1");
+    const progress2 = document.getElementById("progress2");
 
-pdfInput.addEventListener("change",async e=>{
-  const file=e.target.files[0];
-  if(!file)return;
-  pdfProgressBox.classList.remove("hidden");
-  pdfProgress.style.width="10%";
-  const pdf=await pdfjsLib.getDocument(URL.createObjectURL(file)).promise;
-  const totalPages=pdf.numPages;
-  const images=[];
-  for(let i=1;i<=totalPages;i++){
-    const page=await pdf.getPage(i);
-    const viewport=page.getViewport({scale:2});
-    const canvas=document.createElement("canvas");
-    const ctx=canvas.getContext("2d");
-    canvas.height=viewport.height;
-    canvas.width=viewport.width;
-    await page.render({canvasContext:ctx,viewport}).promise;
-    const imgData=canvas.toDataURL("image/png");
-    images.push(imgData);
-    pdfProgress.style.width=`${(i/totalPages)*100}%`;
-  }
-  pdfProgressBox.classList.add("hidden");
-  pdfDownload.classList.remove("hidden");
-  if(images.length===1){
-    pdfDownloadLink.href=images[0];
-    pdfDownloadLink.download="page.png";
-  }else{
-    const zip=new JSZip();
-    images.forEach((img,i)=>zip.file(`page-${i+1}.png`,img.split(",")[1],{base64:true}));
-    const blob=await zip.generateAsync({type:"blob"});
-    pdfDownloadLink.href=URL.createObjectURL(blob);
-    pdfDownloadLink.download="images.zip";
-  }
-});
-
-// tabs
-const tabPdf=document.getElementById("tabPdfToImg");
-const tabImg=document.getElementById("tabImgToPdf");
-const pdfTab=document.getElementById("pdfToImage");
-const imgTab=document.getElementById("imageToPdf");
-tabPdf.onclick=()=>{tabPdf.classList.add("active");tabImg.classList.remove("active");pdfTab.classList.add("active");imgTab.classList.remove("active");};
-tabImg.onclick=()=>{tabImg.classList.add("active");tabPdf.classList.remove("active");imgTab.classList.add("active");pdfTab.classList.remove("active");};
-
-// Image→PDF
-const imageInput=document.getElementById("imageFiles");
-const sortableList=document.getElementById("sortableList");
-const convertBtn=document.getElementById("convertImageToPdfBtn");
-const downloadContainer=document.getElementById("downloadContainer");
-const downloadLink=document.getElementById("downloadLink");
-const progressContainer=document.getElementById("progressContainer");
-const progressBar=document.getElementById("progressBar");
-let imageFiles=[];
-
-imageInput.addEventListener("change",e=>{
-  imageFiles=Array.from(e.target.files);
-  showPreviews();
-  convertBtn.disabled=imageFiles.length===0;
-});
-
-function showPreviews(){
-  sortableList.innerHTML="";
-  imageFiles.forEach((file,i)=>{
-    const reader=new FileReader();
-    reader.onload=e=>{
-      const wrap=document.createElement("div");
-      wrap.className="thumb-wrapper";
-      const img=document.createElement("img");
-      img.src=e.target.result;
-      img.className="thumb";
-      const lbl=document.createElement("div");
-      lbl.className="page-label";
-      lbl.textContent=`Page ${i+1}`;
-      wrap.appendChild(img);wrap.appendChild(lbl);
-      sortableList.appendChild(wrap);
+    pdfTab.onclick = () => {
+      pdfTab.classList.add("active");
+      imgTab.classList.remove("active");
+      pdfSection.classList.add("active");
+      imgSection.classList.remove("active");
     };
-    reader.readAsDataURL(file);
-  });
-}
 
-new Sortable(sortableList,{
-  animation:150,
-  onEnd:()=>{
-    const reordered=[];
-    sortableList.querySelectorAll(".thumb-wrapper").forEach((w,i)=>{
-      const idx=[...sortableList.children].indexOf(w);
-      reordered.push(imageFiles[idx]);
-    });
-    imageFiles=reordered;
-    document.querySelectorAll(".page-label").forEach((l,i)=>l.textContent=`Page ${i+1}`);
-  }
-});
+    imgTab.onclick = () => {
+      imgTab.classList.add("active");
+      pdfTab.classList.remove("active");
+      imgSection.classList.add("active");
+      pdfSection.classList.remove("active");
+    };
 
-convertBtn.addEventListener("click",async()=>{
-  if(!imageFiles.length)return;
-  convertBtn.disabled=true;
-  progressContainer.classList.remove("hidden");
-  progressBar.style.width="10%";
-  const {jsPDF}=window.jspdf;
-  const pdf=new jsPDF("p","mm","a4");
-  for(let i=0;i<imageFiles.length;i++){
-    const img=await loadImage(URL.createObjectURL(imageFiles[i]));
-    const ratio=Math.min(190/img.width,277/img.height);
-    const w=img.width*ratio,h=img.height*ratio;
-    const x=(210-w)/2,y=(297-h)/2;
-    pdf.addImage(img,"JPEG",x,y,w,h);
-    if(i<imageFiles.length-1)pdf.addPage();
-    progressBar.style.width=`${((i+1)/imageFiles.length)*100}%`;
-  }
-  const blob=pdf.output("blob");
-  const url=URL.createObjectURL(blob);
-  progressContainer.classList.add("hidden");
-  downloadContainer.classList.remove("hidden");
-  downloadLink.href=url;
-  downloadLink.download="converted.pdf";
-  convertBtn.disabled=false;
-});
+    // Image → PDF reorderable preview
+    const previewGrid = document.getElementById("previewGrid");
+    let imageFiles = [];
 
-function loadImage(src){return new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.src=src;});}
-</script>
+    document.getElementById("imgDrop").onclick = async () => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/*";
+      input.multiple = true;
+      input.onchange = (e) => {
+        imageFiles = Array.from(e.target.files);
+        showPreview();
+      };
+      input.click();
+    };
 
-<!-- JSZip for multi-page download -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    function showPreview() {
+      previewGrid.innerHTML = "";
+      imageFiles.forEach((file, i) => {
+        const div = document.createElement("div");
+        div.className = "preview-item";
+        const img = document.createElement("img");
+        img.src = URL.createObjectURL(file);
+        const label = document.createElement("div");
+        label.className = "page-label";
+        label.textContent = "Page " + (i + 1);
+        div.appendChild(img);
+        div.appendChild(label);
+        previewGrid.appendChild(div);
+      });
+      new Sortable(previewGrid, { animation: 150 });
+    }
+
+    document.getElementById("convertImgToPdf").onclick = async () => {
+      if (!imageFiles.length) return alert("Please select images first!");
+      progress2.style.width = "50%";
+      const { PDFDocument } = PDFLib;
+      const pdfDoc = await PDFDocument.create();
+      const order = [...previewGrid.children].map((child) =>
+        Array.from(previewGrid.children).indexOf(child)
+      );
+      for (let child of previewGrid.children) {
+        const index = Array.from(previewGrid.children).indexOf(child);
+        const file = imageFiles[index];
+        const imgBytes = await file.arrayBuffer();
+        let img;
+        if (file.type === "image/png")
+          img = await pdfDoc.embedPng(imgBytes);
+        else img = await pdfDoc.embedJpg(imgBytes);
+        const page = pdfDoc.addPage([img.width, img.height]);
+        page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
+      }
+      progress2.style.width = "90%";
+      const pdfBytes = await pdfDoc.save();
+      const blob = new Blob([pdfBytes], { type: "application/pdf" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "converted.pdf";
+      link.click();
+      progress2.style.width = "100%";
+      document.getElementById("status2").textContent = "✅ Conversion Complete!";
+    };
+  </script>
 </body>
 </html>
-
-
-
