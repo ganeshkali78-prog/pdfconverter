@@ -3,26 +3,104 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>PDFConvertify — Free PDF ⇄ Image Converter</title>
-  <meta name="description" content="Convert PDF to PNG/JPG and images (PNG, JPG) to a single PDF. 100% private: runs in your browser. No upload required.">
-  <meta name="keywords" content="pdf to png,pdf to jpg,image to pdf,png to pdf,jpg to pdf,online converter,free converter,pdfconvertify">
-  <link rel="canonical" href="https://pdfconvertify.netlify.app/">
+  <!-- 🔥 Optimized SEO and Social Meta Tags -->
+  <title>PDFConvertify — Free PDF ⇄ Image Converter | 100% Private & Offline</title>
+
+  <meta name="description" content="Convert PDF to PNG/JPG or merge images to PDF — all offline, free, and private. PDFConvertify works directly in your browser. No upload, no sign-up, no limits.">
+  <meta name="keywords" content="pdf to png, pdf to jpg, image to pdf, png to pdf, jpg to pdf, convert pdf offline, pdf converter no upload, free pdf converter, pdfconvertify, browser pdf tool, merge jpg to pdf">
+
+  <!-- Open Graph (for Facebook, LinkedIn, WhatsApp) -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="PDFConvertify — Free PDF ⇄ Image Converter (Offline, No Upload)">
+  <meta property="og:description" content="Convert PDF to images or merge JPG/PNG to PDF instantly in your browser — no upload, 100% private. Free, fast, and secure.">
+  <meta property="og:url" content="https://pdfconvertify.in/">
+  <meta property="og:image" content="https://pdfconvertify.in/preview.png">
+  <meta property="og:site_name" content="PDFConvertify">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PDFConvertify — Free PDF ⇄ Image Converter">
+  <meta name="twitter:description" content="Free, secure, offline PDF to Image and Image to PDF converter. Convert files directly in your browser — no uploads, no data tracking.">
+  <meta name="twitter:image" content="https://pdfconvertify.in/preview.png">
+  <meta name="twitter:creator" content="@pdfconvertify">
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://pdfconvertify.in/">
+
   <link rel="icon" href="favicon.png">
   <link rel="stylesheet" href="style.css">
 
 
   <!-- Structured data -->
   <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"SoftwareApplication",
-    "name":"PDFConvertify",
-    "url":"https://pdfconvertify.netlify.app/",
-    "description":"Free online PDF ⇄ Image converter. Convert PDF to PNG/JPG and images to single PDF. Client-side, no uploads.",
-    "applicationCategory":"UtilitiesApplication",
-    "operatingSystem":"Any",
-    "offers": { "@type":"Offer", "price":"0", "priceCurrency":"INR" }
-  }
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "PDFConvertify",
+      "url": "https://pdfconvertify.in/",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Any",
+      "description": "Free online PDF to PNG/JPG and image to PDF converter — 100% private, fast, and secure. Convert files directly in your browser, no upload required.",
+      "image": "https://pdfconvertify.in/favicon.png",
+      "creator": {
+        "@type": "Person",
+        "name": "P. Ganesh"
+        },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "INR"
+        }
+    }
+  </script>
+  <!-- FAQ Structured Data -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is PDFConvertify free to use?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes! PDFConvertify is completely free with no hidden fees or limits. All conversions happen locally in your browser — no account or payment required."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does PDFConvertify upload my files to a server?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. PDFConvertify performs all conversions directly in your browser using JavaScript and WebAssembly. Your files never leave your device, ensuring 100% privacy."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I convert multi-page PDFs?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, PDFConvertify can convert multi-page PDFs. Each page will be exported as an image and automatically downloaded as a ZIP file."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I merge multiple images into a single PDF?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. You can upload multiple JPG or PNG files, reorder them easily, and merge them into one combined PDF document."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does PDFConvertify work offline?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes! Once the page is loaded, you can even disconnect the internet and still perform PDF ↔ Image conversions fully offline."
+          }
+        }
+      ]
+    }
   </script>
 
  
@@ -78,10 +156,14 @@
 
           <div class="progress"><i></i></div>
           <p class="note">💡 Multiple pages will be downloaded automatically as a ZIP file (single page downloads directly).</p>
-          <p class="note" id="pdfStatus">No file loaded</p>
-          <div style="display:flex;gap:10px;justify-content:center;margin-top:8px">
-            <button class="btn" id="pdfConvert">Convert & Download</button>
+          <p class="note" id="pdfStatus">No file selected</p>
+
+          <!-- Buttons row -->
+          <div class="button-row">
+              <button class="btn btn-clear" id="clearAll">Clear All</button>
+              <button class="btn btn-main" id="pdfConvert">Convert & Download</button>
           </div>
+
         </div>
       </div>
 
@@ -110,9 +192,11 @@
           <p class="note">💡 Select multiple images; drag thumbnails to reorder pages in the resulting PDF.</p>
           <p class="note" id="imgStatus">No images selected</p>
 
-          <div style="display:flex;gap:10px;justify-content:center;margin-top:8px">
+          <div class="button-row">
+            <button class="btn btn-clear" id="clearAllImg">Clear All</button>
             <button class="btn btn-main" id="imgToPdf">Merge to PDF</button>
           </div>
+
         </div>
       </div>
 
@@ -229,18 +313,35 @@
   const $ = sel => document.querySelector(sel);
   const $$ = sel => Array.from(document.querySelectorAll(sel));
 
-  // Tabs
+    // === Smooth Tab Switching with Fade Animation ===
   $$('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
       $$('.tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       const target = tab.dataset.tab;
+
       $$('.panel').forEach(p => {
-        if (p.id === target) { p.classList.add('active'); p.setAttribute('aria-hidden','false'); }
-        else { p.classList.remove('active'); p.setAttribute('aria-hidden','true'); }
+        if (p.id === target) {
+          // smooth show
+          p.classList.add('active');
+          p.setAttribute('aria-hidden', 'false');
+
+          // restart animation for buttons
+          const buttons = p.querySelectorAll('.button-row');
+          buttons.forEach(btnRow => {
+            btnRow.style.animation = 'none';
+            btnRow.offsetHeight; // reflow
+            btnRow.style.animation = '';
+          });
+        } else {
+          // smooth hide
+          p.classList.remove('active');
+          p.setAttribute('aria-hidden', 'true');
+        }
       });
     });
   });
+
 
   // Smart detection: if user drops/uploads an item, switch to appropriate tab
   function switchToTab(name) {
@@ -540,6 +641,27 @@
 
     console.log("All cleared successfully ✅");
   });
+  // === Image → PDF "Clear All" Button ===
+  const clearAllImgBtn = document.getElementById("clearAllImg");
+  if (clearAllImgBtn) {
+    clearAllImgBtn.addEventListener("click", () => {
+      const imgInput = document.getElementById("imgFiles");
+      const thumbList = document.getElementById("thumbs");
+      const imgStatus = document.getElementById("imgStatus");
+      const imgProgress = document.querySelector("#img2pdf .progress i");
+
+      if (imgInput) imgInput.value = "";
+      if (thumbList) thumbList.innerHTML = "";
+      if (imgStatus) imgStatus.textContent = "No images selected";
+      if (imgProgress) imgProgress.style.width = "0%";
+
+      const successTicks = document.querySelectorAll(".success-tick");
+      successTicks.forEach(tick => tick.remove());
+
+      console.log("🧹 Cleared Image → PDF panel");
+    });
+  }
+
 
 
   // Extra: auto-detect file type if user drags a single file from outside

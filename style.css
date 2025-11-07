@@ -100,6 +100,70 @@
     .tabs{display:flex;gap:8px;border-radius:10px;overflow:hidden;margin-top:14px}
     .tab{padding:8px 14px;cursor:pointer;background:rgba(0,0,0,0.03);border-radius:8px;font-weight:700}
     .tab.active{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff}
+/* === Animated Tab Switch === */
+.tabs {
+  display: flex;
+  gap: 8px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 14px;
+  position: relative;
+}
+
+.tab {
+  padding: 10px 18px;
+  cursor: pointer;
+  font-weight: 700;
+  color: #333;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.tab.active {
+  background: linear-gradient(90deg, #00cc99, #0099ff);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  transform: scale(1.05);
+}
+
+/* Add smooth underline indicator */
+.tab::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 0;
+  height: 3px;
+  background: white;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+  opacity: 0;
+}
+
+.tab.active::after {
+  width: 80%;
+  opacity: 1;
+}
+
+/* Panel fade transition */
+.panel {
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transform: translateY(10px);
+  transition: all 0.35s ease-in-out;
+}
+.panel.active {
+  opacity: 1;
+  max-height: 4000px;
+  transform: translateY(0);
+}
+.tab.active {
+  box-shadow: 0 0 10px rgba(0, 204, 153, 0.4), 0 0 15px rgba(0, 153, 255, 0.3);
+}
 
     /* panel fade */
     .panel{opacity:0;max-height:0;overflow:hidden;transform:translateY(6px);transition:all .28s ease}
@@ -494,4 +558,67 @@
 .dev-info strong {
   color: #000;
   font-weight: 700;
+}
+/* === Shared Button Layout for Converter Panels === */
+.button-row {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.button-row .btn {
+  flex: 1;
+  max-width: 200px;
+  padding: 12px 0;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+/* Convert / Merge Button */
+.btn-main {
+  background: linear-gradient(90deg, #00cc99, #0099ff);
+  color: white;
+  border: none;
+}
+.btn-main:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Clear All Button */
+.btn-clear {
+  background: #ff4d4d;
+  color: white;
+  border: none;
+}
+.btn-clear:hover {
+  background: #e03e3e;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+/* === Button Fade-Up Animation === */
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.button-row {
+  animation: fadeUp 0.5s ease both;
+}
+
+/* Optional: make each button fade slightly staggered */
+.button-row .btn:nth-child(1) {
+  animation: fadeUp 0.6s ease both;
+}
+.button-row .btn:nth-child(2) {
+  animation: fadeUp 0.7s ease both;
 }
