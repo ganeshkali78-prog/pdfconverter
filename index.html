@@ -8,6 +8,8 @@
   <meta name="keywords" content="pdf to png,pdf to jpg,image to pdf,png to pdf,jpg to pdf,online converter,free converter,pdfconvertify">
   <link rel="canonical" href="https://pdfconvertify.netlify.app/">
   <link rel="icon" href="favicon.png">
+  <link rel="stylesheet" href="style.css">
+
 
   <!-- Structured data -->
   <script type="application/ld+json">
@@ -23,204 +25,7 @@
   }
   </script>
 
-  <style>
-    /* Smooth transition for option buttons */
-    .opt {
-      transition: all 0.35s ease-in-out;
-    }
-    .opt.selected {
-      transform: scale(1.05);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-    .opt:hover {
-      transform: scale(1.03);
-    }
-    
-    /* Convert & Clear buttons animation */
-    .convert-btn, .clear-btn {
-      transition: all 0.3s ease-in-out;
-      border-radius: 8px;
-      font-weight: 600;
-      color: white;
-      padding: 10px 18px;
-      border: none;
-      cursor: pointer;
-    }
-    
-    /* Convert button (dark green theme) */
-    .convert-btn {
-      background: linear-gradient(135deg, #2b8a3e, #1d6b2d);
-    }
-    .convert-btn:hover {
-      background: linear-gradient(135deg, #34a94b, #238d38);
-      transform: scale(1.05);
-    }
-    
-    /* Clear All button (red theme) */
-    .clear-btn {
-      background: linear-gradient(135deg, #d62828, #b91c1c);
-    }
-    .clear-btn:hover {
-      background: linear-gradient(135deg, #f03e3e, #c92424);
-      transform: scale(1.05);
-    }
-    
-    /* Optional glow when clicked */
-    .convert-btn:active, .clear-btn:active {
-      transform: scale(0.97);
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    }
-
-    :root{
-      --page-bg: linear-gradient(to bottom, #00cc99 20%, #0099ff 100%);
-      --card-bg: #ffffff;
-      --muted: #6b7280;
-      --accent1: #00cc99;
-      --accent2: #0099ff;
-      --radius: 14px;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;
-      background:var(--page-bg);
-      background-attachment: fixed;
-      min-height:100vh;
-      display:flex;
-      align-items:flex-start;
-      justify-content:center;
-      padding:40px 20px;
-      color:#111;
-    }
-
-    .container{width:100%;max-width:1000px}
-
-    /* card */
-    .card{
-      background:var(--card-bg);
-      border-radius:var(--radius);
-      box-shadow:0 12px 30px rgba(2,6,23,0.12);
-      padding:28px;
-      position:relative;
-      margin:0 auto 40px;
-      overflow:visible;
-    }
-    .card::before{
-      content:"";
-      position:absolute;
-      top:10px;left:10px;right:10px;bottom:10px;
-      border-radius:calc(var(--radius) - 2px);
-      box-shadow: inset 0 0 20px rgba(0,0,0,0.06), inset 0 0 6px rgba(255,255,255,0.45);
-      pointer-events:none; z-index:0;
-    }
-   
-    .card > *{position:relative;z-index:1}
-
-    .brand{display:flex;align-items:center;gap:14px}
-    .logo{font-weight:800;font-size:22px}
-    .logo span{background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;color:transparent}
-    .lead{color:var(--muted);margin-top:6px}
-
-    .tabs{display:flex;gap:8px;border-radius:10px;overflow:hidden;margin-top:14px}
-    .tab{padding:8px 14px;cursor:pointer;background:rgba(0,0,0,0.03);border-radius:8px;font-weight:700}
-    .tab.active{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff}
-
-    /* panel fade */
-    .panel{opacity:0;max-height:0;overflow:hidden;transform:translateY(6px);transition:all .28s ease}
-    .panel.active{opacity:1;max-height:4000px;transform:none}
-
-    .notice-box{background:#f0fdf4;border-left:4px solid var(--accent1);padding:12px;border-radius:10px;margin-top:10px;color:#065f46;font-size:14px}
-    .lead.note{font-weight:600}
-
-    /* upload areas */
-    .upload-area{margin-top:18px;border-radius:12px;border:1px solid rgba(0,0,0,0.06);padding:18px;background:#fff;display:flex;flex-direction:column;gap:12px}
-    .drag-hint{display:flex;justify-content:space-between;align-items:center}
-    input[type=file]{display:none}
-
-    .opts{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
-    .opt{padding:8px 12px;border-radius:8px;border:1px solid #e6e9ee;background:#fbfdff;cursor:pointer}
-    /* Smooth gradient animation for selected options */
-    .opt {
-      transition: all 0.35s ease-in-out;
-    }
-    
-    /* When user switches between PNG/JPG/PDF, the background gradient fades smoothly */
-    .opt.selected {
-      transform: scale(1.05);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-    
-    /* Optional hover enhancement */
-    .opt:hover {
-      transform: scale(1.03);
-    }
-
-    .opt.selected{border-color:transparent;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;box-shadow:0 6px 18px rgba(0,0,0,0.08)}
-
-    .row{display:flex;gap:10px;align-items:center}
-    .btn{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:white;font-weight:700;cursor:pointer}
-    /* Main convert/download buttons */
-    .btn-main {
-      background: linear-gradient(90deg, #007a3d, #00b359);
-      color: #fff;
-    }
-    
-    /* Clear button (red) */
-    .btn-clear {
-      background: linear-gradient(90deg, #ff4d4d, #ff0000);
-      color: #fff;
-    }
-    .btn-clear:hover,
-    .btn-main:hover {
-      opacity: 0.9;
-    }
-    
-    /* Format option colors */
-    .opt[data-format="png"].selected {
-      background: linear-gradient(90deg, #ff9800, #ffb84d); /* orange */
-      color: #fff;
-    }
-    
-    .opt[data-format="jpg"].selected {
-      background: linear-gradient(90deg, #8e24aa, #ba68c8); /* purple */
-      color: #fff;
-    }
-    
-    .opt[data-size="a4"].selected {
-      background: linear-gradient(90deg, #795548, #a1887f); /* brown */
-      color: #fff;
-    }
-    
-    .opt[data-size="letter"].selected {
-      background: linear-gradient(90deg, #607d8b, #90a4ae); /* blue-gray */
-      color: #fff;
-    }
-
-    .progress{width:100%;height:12px;background:#eef2ff;border-radius:8px;overflow:hidden;margin-top:10px}
-    .progress>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent1),var(--accent2));transition:width .2s ease}
-
-    .note{margin-top:6px;text-align:center;font-size:13px;color:#374151}
-
-    .success-tick{width:40px;height:40px;border-radius:50%;border:3px solid var(--accent1);position:relative;margin:10px auto;animation:tickPop .36s ease}
-    .success-tick::after{content:"";position:absolute;left:10px;top:6px;width:10px;height:18px;border:solid var(--accent1);border-width:0 3px 3px 0;transform:rotate(45deg)}
-    @keyframes tickPop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
-
-    /* image list for reorder (Image -> PDF) */
-    .thumb-list{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
-    .thumb{
-      width:120px;height:120px;border-radius:8px;border:1px solid #e6e9ee;background:#fff;padding:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:grab;
-    }
-    .thumb img{max-width:100%;max-height:68px;display:block;margin-bottom:6px}
-    .thumb .label{font-size:12px;color:var(--muted);text-align:center;word-break:break-word}
-
-    .site-footer{max-width:980px;margin:0 auto;text-align:center;color:var(--muted);font-size:13px;padding:18px 12px;border-radius:10px;background:rgba(255,255,255,0.9);box-shadow:0 6px 20px rgba(2,6,23,0.06)}
-
-    @media (max-width:720px){
-      .thumb{width:100px;height:100px}
-      .card{padding:18px}
-    }
-  </style>
+ 
 </head>
 <body>
   <div class="container">
@@ -382,6 +187,14 @@
     <footer class="site-footer">
       <p><a href="about.html">About</a> • <a href="contact.html">Contact</a> • <a href="privacy.html">Privacy Policy</a></p>
       <p>Made with ❤️ by PDFConvertify</p>
+      <div class="developer-info">
+        <img src="ganesh.jpg" alt="Developer - Ganesh" class="dev-photo">
+        <div>
+          <p>Developed by <strong>P. Ganesh</strong></p>
+          <p style="font-size:12px;">Founder of PDFConvertify</p>
+        </div>
+      </div>
+ 
     </footer>
   </div>
 
@@ -554,7 +367,11 @@
   });
 
   // Image -> PDF logic (with thumbnails and reorder)
-  function clearThumbs(){ thumbList.innerHTML = ''; imgStatus.textContent = 'No images selected'; imgProgress.style.width = '0%'; }
+  function clearThumbs(){ 
+  thumbList.innerHTML = ''; 
+  imgStatus.textContent = 'No images selected'; 
+  imgProgress.style.width = '0%'; 
+  }
   imgFileInput.addEventListener('change', async (e) => {
     const files = Array.from(e.target.files).filter(f => f.type.startsWith('image/'));
     if (files.length === 0) { clearThumbs(); return; }
@@ -664,37 +481,45 @@
 
 
     // Universal Clear All Button
-const clearAllBtn = document.getElementById("clearAll");
+  const clearAllBtn = document.getElementById("clearAll");
 
-clearAllBtn.addEventListener("click", () => {
-  // --- Reset PDF → Image panel ---
-  const pdfInput = document.getElementById("pdfFile");
-  const pdfStatus = document.getElementById("pdfStatus");
-  const pdfProgress = document.getElementById("pdfProgress");
-  const downloadBtn = document.getElementById("downloadBtn");
+  clearAllBtn.addEventListener("click", () => {
+    // --- Reset PDF → Image panel ---
+    const pdfInput = document.getElementById("pdfFile");
+    const pdfStatus = document.getElementById("pdfStatus");
+    const pdfProgress = document.querySelector("#pdf2img .progress i"); // ✅ correct element
+    const downloadBtn = document.getElementById("downloadBtn");
 
-  if (pdfInput) pdfInput.value = "";
-  if (pdfStatus) pdfStatus.textContent = "No file selected";
-  if (pdfProgress) pdfProgress.style.width = "0%";
-  if (downloadBtn) downloadBtn.style.display = "none";
+    if (pdfInput) pdfInput.value = "";
+    if (pdfStatus) pdfStatus.textContent = "No file selected";
+    if (pdfProgress) {
+      pdfProgress.style.width = "0%";
+      pdfProgress.style.transition = "width 0.3s ease"; // smooth reset
+    }
+    if (downloadBtn) downloadBtn.style.display = "none";
 
-  // --- Reset Image → PDF panel ---
-  const imgInput = document.getElementById("imgFiles");
-  const thumbList = document.getElementById("thumbList");
-  const imgStatus = document.getElementById("imgStatus");
-  const imgProgress = document.getElementById("imgProgress");
-  const imgDownloadBtn = document.getElementById("imgDownloadBtn");
+    // --- Reset Image → PDF panel ---
+    const imgInput = document.getElementById("imgFiles");
+    const thumbList = document.getElementById("thumbs"); // ✅ corrected ID
+    const imgStatus = document.getElementById("imgStatus");
+    const imgProgress = document.querySelector("#img2pdf .progress i"); // ✅ correct element
+    const imgDownloadBtn = document.getElementById("imgDownloadBtn");
 
-  if (imgInput) imgInput.value = "";
-  if (thumbList) thumbList.innerHTML = "";
-  if (imgStatus) imgStatus.textContent = "No images selected";
-  if (imgProgress) imgProgress.style.width = "0%";
-  if (imgDownloadBtn) imgDownloadBtn.style.display = "none";
+    if (imgInput) imgInput.value = "";
+    if (thumbList) thumbList.innerHTML = "";
+    if (imgStatus) imgStatus.textContent = "No images selected";
+    if (imgProgress) {
+      imgProgress.style.width = "0%";
+      imgProgress.style.transition = "width 0.3s ease"; // smooth reset
+    }
+    if (imgDownloadBtn) imgDownloadBtn.style.display = "none";
 
-  // Reset visual “Conversion Complete” tick (if visible)
-  const completeMarks = document.querySelectorAll(".complete-mark");
-  completeMarks.forEach(mark => mark.style.display = "none");
-});
+    // --- Reset “Conversion Complete” tick or success message ---
+    const successTicks = document.querySelectorAll(".success-tick");
+    successTicks.forEach(tick => tick.remove()); // ✅ completely removes them
+
+    console.log("All cleared successfully ✅");
+  });
 
 
   // Extra: auto-detect file type if user drags a single file from outside
