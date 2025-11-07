@@ -440,3 +440,58 @@
     .blog-footer a:hover {
         text-decoration: underline;
     }
+/* --- Modern Footer Layout --- */
+.site-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  padding: 18px 24px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  font-size: 15px;
+  color: var(--muted);
+}
+
+/* Left side links */
+.footer-left a {
+  color: var(--accent2);
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 16px; /* 🔹 larger, more visible */
+  margin: 0 4px;
+}
+
+.footer-left a:hover {
+  color: var(--accent1);
+}
+
+/* Right side developer info */
+.footer-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dev-photo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 3px solid var(--accent1);
+  object-fit: cover;
+  object-position: top;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.dev-info p {
+  margin: 0;
+  line-height: 1.4;
+  color: #333;
+}
+
+.dev-info strong {
+  color: #000;
+  font-weight: 700;
+}
